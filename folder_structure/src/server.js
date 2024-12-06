@@ -1,23 +1,33 @@
 import express from "express";
 import userrouter from "./routes/userroutes.js";
 import { ConnectDB } from "./config/connectdb.js";
+import router from "./routes/userroutes.js";
+import bodyParser from "body-parser";
+import dotenv from "dotenv";
+import authMiddle from "./middleware/authMiddle.js"
+
+dotenv.config();
+
 //app intialize
 const app = express();
 app.use(express.json())
- ConnectDB()
+ ConnectDB(process.env.Mongo_url);
 //routes
 
 app.use("/user", userrouter)
 
 
-app.get("/",(req,res)=>{
-    let data={html:"<h1>Hello</h1>",msg:"It is heading tag"}
-    res.send(`${data.html},${data.msg}`)
+app.get("/data",(req,res)=>{
+    res.json("data is fatched")
 })
-const getData=(req,res)=>{
-    res.send("getting Data")
-}
-app.get("/data",getData)
+app.post("/create", authMiddle,(req,res)=>{
+    const data = req.body;
+    res.json(data)
+  })
+  
+  
+
+  
  //Start the server
 
  let PORT =8081;
